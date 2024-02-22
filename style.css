@@ -1,8 +1,9 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
+  max-width: 640px;
 }
 
-.div-center {
+/* .div-center {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,7 +13,7 @@ body {
 
 .div-center > * {
   margin-block: 10px;
-}
+} */
 
 li {
   margin-block: 10px;
@@ -25,6 +26,7 @@ input, select {
   border-radius: 5px;
   border: 1px solid #ccc;
   font-size: medium;
+  width: -webkit-fill-available;
 }
 
 button {
@@ -37,11 +39,11 @@ button {
 }
 
 button:hover {
-  background-color: #f4f4f4;
+  filter: brightness(90%);
 }
 
 button:active {
-  background-color: #e0e0e0;
+  filter: brightness(80%);
 }
 
 .loc-item {
@@ -52,8 +54,12 @@ button:active {
 .div-flex {
   display: flex;
   flex-direction: row;
+  align-items: last baseline;
+  gap: 10px;
 }
 
 .div-form > * {
-  margin-inline: 3px;
+  margin-block: 5px;
+  display: flex;
+  flex-direction: column;
 }
