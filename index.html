@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Geolocation</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; }
+    li { margin-block: 10px; line-height: 1; }
+    .loc-item { border: 1px solid #ccc; padding: 10px; }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>Current location</h1>
+    <p><b>Lat-Lon:</b> <span id="latLon"></span></p>
+    <ul id="posDetails">
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+    <button onclick="showGeo()">Refresh</button>
+  </div>
+  <hr>
+  <div>
+    <h1>Nearby locations</h1>
+    <ul id="locList"></ul>
+  </div>
+
+  <script>
+    const latLon = document.getElementById("latLon")
+    const posDetailLi = document.querySelectorAll("#posDetails li")
+    const locList = document.getElementById("locList")
+
+    let latLonData = ""
+
+    function fetchLocation(latLonData) {
+      fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLonData}&language=th&location_type=ROOFTOP&key=AIzaSyAtom3GbiMjJi4rx_NBfxpE3gE_pPSBlqI`)
+        .then(response => response.json())
+        .then(data => displayLocationList(data))
+    }
+
+    function showGeo() {
+      latLon.innerHTML = "Loading..."
+      locList.innerHTML = "Loading..."
+      navigator.geolocation.getCurrentPosition(displayDetails, displayError)
+    }
+
+    function displayDetails(p) {
+      latLonData = `${p.coords.latitude},${p.coords.longitude}`
+      fetchLocation(latLonData)
+      latLon.innerHTML = latLonData
+      posDetailLi[0].innerHTML = `<b>Accuracy:</b> ${p.coords.accuracy}`
+      posDetailLi[1].innerHTML = `<b>Altitude:</b> ${p.coords.altitude}`
+      posDetailLi[2].innerHTML = `<b>AltitudeAccuracy:</b> ${p.coords.altitudeAccuracy}`
+      posDetailLi[3].innerHTML = `<b>Heading:</b> ${p.coords.heading}`
+      posDetailLi[4].innerHTML = `<b>Latitude:</b> ${p.coords.latitude}`
+      posDetailLi[5].innerHTML = `<b>Longitude:</b> ${p.coords.longitude}`
+      posDetailLi[6].innerHTML = `<b>Speed:</b> ${p.coords.speed}`
+    }
+
+    function displayError() {
+      console.error("Geolocation not available")
+      for (let i of posDetailLi) {
+        i.innerHTML = 'N/A'
+      }
+    }
+
+    function displayLocationList(data) {
+      locList.innerHTML = ""
+      data.results.forEach(result => {
+        const li = document.createElement("li")
+        li.classList.add("loc-item")
+        li.innerHTML = `
+          <b>${result.formatted_address}</b><br>
+          <small><b>Place ID:</b> ${result.place_id}</small><br>
+          <small><b>Types:</b> ${result.types}</small>
+        `
+        locList.appendChild(li)
+      })
+    }
+    showGeo()
+  </script>
+</body>
+</html>
