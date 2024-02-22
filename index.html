@@ -6,23 +6,19 @@
   <title>Get Geolocation</title>
   <style>
     body { font-family: Arial, Helvetica, sans-serif; }
+    div, footer { display: flex; flex-direction: column; align-items: center; max-width: 640px; margin-inline: auto; }
+    div > * { margin-block: 10px; }
     li { margin-block: 10px; line-height: 1; }
+    button { padding-inline: 20px; padding-block: 8px; border-radius: 10px; border: none; font-size: medium; }
     .loc-item { border: 1px solid #ccc; padding: 10px; }
   </style>
 </head>
+
 <body>
   <div>
     <h1>Current location</h1>
     <p><b>Lat-Lon:</b> <span id="latLon"></span></p>
-    <ul id="posDetails">
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-    </ul>
+    <ul id="posDetails"></ul>
     <button onclick="showGeo()">Refresh</button>
   </div>
   <hr>
@@ -30,57 +26,72 @@
     <h1>Nearby locations</h1>
     <ul id="locList"></ul>
   </div>
+  <hr>
+  <footer>
+    <p><a href="https://developers.google.com/maps/documentation/geocoding/requests-reverse-geocoding">Google Maps Geocoding API document</a></p>
+  </footer>
 
   <script>
     const latLon = document.getElementById("latLon")
-    const posDetailLi = document.querySelectorAll("#posDetails li")
-    const locList = document.getElementById("locList")
+    const posDetailUl = document.getElementById("posDetails")
+    const locListUl = document.getElementById("locList")
 
     let latLonData = ""
 
     function fetchLocation(latLonData) {
-      fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLonData}&language=th&location_type=ROOFTOP&key=AIzaSyAtom3GbiMjJi4rx_NBfxpE3gE_pPSBlqI`)
+      fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLonData}&language=th&key=AIzaSyAtom3GbiMjJi4rx_NBfxpE3gE_pPSBlqI`)
         .then(response => response.json())
         .then(data => displayLocationList(data))
     }
 
     function showGeo() {
-      latLon.innerHTML = "Loading..."
-      locList.innerHTML = "Loading..."
       navigator.geolocation.getCurrentPosition(displayDetails, displayError)
     }
 
     function displayDetails(p) {
-      latLonData = `${p.coords.latitude},${p.coords.longitude}`
-      fetchLocation(latLonData)
+      const locData = { 
+        accuracy: p.coords.accuracy,
+        altitude: p.coords.altitude,
+        altitudeAccuracy: p.coords.altitudeAccuracy,
+        heading: p.coords.heading,
+        latitude: p.coords.latitude,
+        longitude: p.coords.longitude,
+        speed: p.coords.speed
+      }
+      latLon.innerHTML = "Loading..."
+      locListUl.innerHTML = "Loading..."
+      latLonData = `${locData.latitude},${locData.longitude}`
       latLon.innerHTML = latLonData
-      posDetailLi[0].innerHTML = `<b>Accuracy:</b> ${p.coords.accuracy}`
-      posDetailLi[1].innerHTML = `<b>Altitude:</b> ${p.coords.altitude}`
-      posDetailLi[2].innerHTML = `<b>AltitudeAccuracy:</b> ${p.coords.altitudeAccuracy}`
-      posDetailLi[3].innerHTML = `<b>Heading:</b> ${p.coords.heading}`
-      posDetailLi[4].innerHTML = `<b>Latitude:</b> ${p.coords.latitude}`
-      posDetailLi[5].innerHTML = `<b>Longitude:</b> ${p.coords.longitude}`
-      posDetailLi[6].innerHTML = `<b>Speed:</b> ${p.coords.speed}`
+      posDetailUl.innerHTML = ""
+      Object.keys(locData).forEach((key, i) => {
+        const li = document.createElement("li")
+        li.innerHTML = `<b>${key}:</b> ${locData[key]}`
+        posDetailUl.appendChild(li)
+      })
+      fetchLocation(latLonData)
     }
 
     function displayError() {
       console.error("Geolocation not available")
+      latLon.innerHTML = "N/A"
+      const posDetailLi = document.querySelectorAll("#posDetails li")
       for (let i of posDetailLi) {
         i.innerHTML = 'N/A'
       }
     }
 
     function displayLocationList(data) {
-      locList.innerHTML = ""
+      locListUl.innerHTML = ""
       data.results.forEach(result => {
         const li = document.createElement("li")
         li.classList.add("loc-item")
         li.innerHTML = `
           <b>${result.formatted_address}</b><br>
-          <small><b>Place ID:</b> ${result.place_id}</small><br>
-          <small><b>Types:</b> ${result.types}</small>
+          <small><b>result_type:</b> ${result.types}</small><br>
+          <small><b>location_type:</b> ${result.geometry.location_type}</small><br>
+          <small style="word-break: break-all"><b>place_id:</b> ${result.place_id}</small>
         `
-        locList.appendChild(li)
+        locListUl.appendChild(li)
       })
     }
     showGeo()
