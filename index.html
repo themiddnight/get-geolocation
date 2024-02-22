@@ -1,100 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Get Geolocation</title>
-  <style>
-    body { font-family: Arial, Helvetica, sans-serif; }
-    div, footer { display: flex; flex-direction: column; align-items: center; max-width: 640px; margin-inline: auto; }
-    div > * { margin-block: 10px; }
-    li { margin-block: 10px; line-height: 1; }
-    button { padding-inline: 20px; padding-block: 8px; border-radius: 10px; border: none; font-size: medium; }
-    .loc-item { border: 1px solid #ccc; padding: 10px; }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <div>
+  <div class="div-center">
     <h1>Current location</h1>
     <p><b>Lat-Lon:</b> <span id="latLon"></span></p>
     <ul id="posDetails"></ul>
-    <button onclick="showGeo()">Refresh</button>
+    <div class="div-form">
+      <label for="api_key">API key:</label>
+      <input type="text" id="api_key" placeholder="Enter your API key">
+    </div>
+    <div class="div-flex">
+      <div class="div-form">
+        <label for="api_type">API type:</label>
+        <select id="api_type" name="api_type">
+          <option value="geocode">Geocoding</option>
+          <option value="nearby">Nearby Place</option>
+        </select>
+      </div>
+      <div class="div-form">
+        <label for="order_by">Order by:</label>
+        <select id="order_by" name="order_by" disabled>
+          <option value="POPULARITY">Popularity</option>
+          <option value="DISTANCE">Distance</option>
+        </select>
+      </div>
+    </div>
+    <button id="refreshBtn">Search</button>
   </div>
   <hr>
-  <div>
+  <div class="div-center">
     <h1>Nearby locations</h1>
     <ul id="locList"></ul>
   </div>
   <hr>
-  <footer>
-    <p><a href="https://developers.google.com/maps/documentation/geocoding/requests-reverse-geocoding">Google Maps Geocoding API document</a></p>
+  <footer class="div-center">
+    <p><a href="https://developers.google.com/maps/documentation/geocoding/requests-reverse-geocoding">
+      Google Maps Geocoding API
+    </a></p>
+    <p><a href="https://developers.google.com/maps/documentation/places/web-service/op-overview">
+      Google Maps Places API
+    </a></p>
   </footer>
 
-  <script>
-    const latLon = document.getElementById("latLon")
-    const posDetailUl = document.getElementById("posDetails")
-    const locListUl = document.getElementById("locList")
-
-    let latLonData = ""
-
-    function fetchLocation(latLonData) {
-      fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLonData}&language=th&key=AIzaSyAtom3GbiMjJi4rx_NBfxpE3gE_pPSBlqI`)
-        .then(response => response.json())
-        .then(data => displayLocationList(data))
-    }
-
-    function showGeo() {
-      navigator.geolocation.getCurrentPosition(displayDetails, displayError)
-    }
-
-    function displayDetails(p) {
-      const locData = { 
-        accuracy: p.coords.accuracy,
-        altitude: p.coords.altitude,
-        altitudeAccuracy: p.coords.altitudeAccuracy,
-        heading: p.coords.heading,
-        latitude: p.coords.latitude,
-        longitude: p.coords.longitude,
-        speed: p.coords.speed
-      }
-      latLon.innerHTML = "Loading..."
-      locListUl.innerHTML = "Loading..."
-      latLonData = `${locData.latitude},${locData.longitude}`
-      latLon.innerHTML = latLonData
-      posDetailUl.innerHTML = ""
-      Object.keys(locData).forEach((key, i) => {
-        const li = document.createElement("li")
-        li.innerHTML = `<b>${key}:</b> ${locData[key]}`
-        posDetailUl.appendChild(li)
-      })
-      fetchLocation(latLonData)
-    }
-
-    function displayError() {
-      console.error("Geolocation not available")
-      latLon.innerHTML = "N/A"
-      const posDetailLi = document.querySelectorAll("#posDetails li")
-      for (let i of posDetailLi) {
-        i.innerHTML = 'N/A'
-      }
-    }
-
-    function displayLocationList(data) {
-      locListUl.innerHTML = ""
-      data.results.forEach(result => {
-        const li = document.createElement("li")
-        li.classList.add("loc-item")
-        li.innerHTML = `
-          <b>${result.formatted_address}</b><br>
-          <small><b>result_type:</b> ${result.types}</small><br>
-          <small><b>location_type:</b> ${result.geometry.location_type}</small><br>
-          <small style="word-break: break-all"><b>place_id:</b> ${result.place_id}</small>
-        `
-        locListUl.appendChild(li)
-      })
-    }
-    showGeo()
-  </script>
+  <script type="module" src="script.js"></script>
 </body>
+
 </html>
