@@ -14,15 +14,20 @@
     <p><b>Lat-Lon:</b> <span id="latLon"></span></p>
     <ul id="posDetails"></ul>
     <div class="div-form">
-      <label for="api_key">API key:</label>
-      <input type="text" id="api_key" placeholder="Enter your API key">
+      <label for="google_api_key">Google API key:</label>
+      <input type="text" id="google_api_key" placeholder="API key for Google service">
+    </div>
+    <div class="div-form">
+      <label for="longdo_api_key">Longdo API key:</label>
+      <input type="text" id="longdo_api_key" placeholder="API key for Longdo service">
     </div>
     <div class="div-flex">
       <div class="div-form">
         <label for="api_type">API type:</label>
         <select id="api_type" name="api_type">
-          <option value="geocode">Geocoding</option>
-          <option value="nearby">Nearby Place</option>
+          <option value="longdo_nearby">Longdo Nearby</option>
+          <option value="google_geocode">Google Geocode</option>
+          <option value="google_nearby">Google Nearby</option>
         </select>
       </div>
       <div class="div-form">

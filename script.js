@@ -1,31 +1,39 @@
-import { displayGeoLocation, displayNearby } from "./api.js";
+import { googleDisplayGeoLocation, googleDisplayNearby, longdoDisplayNearby } from "./api.js";
 
 const latLon = document.getElementById("latLon");
 const posDetailUl = document.getElementById("posDetails");
 const locListUl = document.getElementById("locList");
 const refreshBtn = document.getElementById("refreshBtn");
-const apiKeyInput = document.getElementById("api_key");
+const googleApiKeyInput = document.getElementById("google_api_key");
+const longdoApiKeyInput = document.getElementById("longdo_api_key");
 const apiTypeSelect = document.getElementById("api_type");
 const orderSelect = document.getElementById("order_by");
 
+let latLonData = "";
+
 apiTypeSelect.addEventListener("change", async () => {
-  if (apiTypeSelect.value === "geocode") {
-    orderSelect.disabled = true;
-  } else {
+  if (apiTypeSelect.value === "google_nearby") {
     orderSelect.disabled = false;
+  } else {
+    orderSelect.disabled = true;
   }
 });
 
 refreshBtn.addEventListener("click", async () => {
-  await refresh();
+  await search();
 });
 
-const apiKeyStorage = localStorage.getItem("apiKey");
-if (apiKeyStorage) {
-  apiKeyInput.value = apiKeyStorage;
+try {
+  const apiKeyStorage = JSON.parse(localStorage.getItem("apiKey"));
+  if (apiKeyStorage.google) {
+    googleApiKeyInput.value = apiKeyStorage.google;
+  }
+  if (apiKeyStorage.longdo) {
+    longdoApiKeyInput.value = apiKeyStorage.longdo;
+  }
+} catch {
+  localStorage.setItem("apiKey", JSON.stringify({ google: "", longdo: "" }));
 }
-
-let latLonData = "";
 
 async function getCoords() {
   try {
@@ -64,15 +72,19 @@ async function displayDetails() {
   return locData;
 }
 
-async function refresh() {
-  if (apiKeyInput.value) {
-    localStorage.setItem("apiKey", apiKeyInput.value);
-  }
+async function search() {
+  localStorage.setItem("apiKey", JSON.stringify({
+    google: googleApiKeyInput.value,
+    longdo: longdoApiKeyInput.value,
+  }));
+  console.log(localStorage.getItem("apiKey"));
   const locData = await displayDetails();
-  if (apiTypeSelect.value === "geocode") {
-    displayGeoLocation(apiKeyInput.value, latLonData, locListUl);
-  } else {
-    displayNearby(apiKeyInput.value, locData, locListUl, orderSelect.value);
+  if (apiTypeSelect.value === "longdo_nearby") {
+    longdoDisplayNearby(longdoApiKeyInput.value, locData, locListUl);
+  } else if (apiTypeSelect.value === "google_geocode") {
+    googleDisplayGeoLocation(googleApiKeyInput.value, latLonData, locListUl);
+  } else if (apiTypeSelect.value === "google_nearby") {
+    googleDisplayNearby(googleApiKeyInput.value, locData, locListUl, orderSelect.value);
   }
 }
 
