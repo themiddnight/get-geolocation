@@ -1,4 +1,8 @@
-import { googleDisplayGeoLocation, googleDisplayNearby, longdoDisplayNearby } from "./api.js";
+import {
+  googleDisplayGeoLocation,
+  googleDisplayNearby,
+  longdoDisplayNearby,
+} from "./api.js";
 
 const latLon = document.getElementById("latLon");
 const posDetailUl = document.getElementById("posDetails");
@@ -38,7 +42,10 @@ try {
 async function getCoords() {
   try {
     const p = await new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject);
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 5000,
+      });
     });
     return {
       accuracy: p.coords.accuracy,
@@ -73,10 +80,13 @@ async function displayDetails() {
 }
 
 async function search() {
-  localStorage.setItem("apiKey", JSON.stringify({
-    google: googleApiKeyInput.value,
-    longdo: longdoApiKeyInput.value,
-  }));
+  localStorage.setItem(
+    "apiKey",
+    JSON.stringify({
+      google: googleApiKeyInput.value,
+      longdo: longdoApiKeyInput.value,
+    })
+  );
   console.log(localStorage.getItem("apiKey"));
   const locData = await displayDetails();
   if (apiTypeSelect.value === "longdo_nearby") {
@@ -84,7 +94,12 @@ async function search() {
   } else if (apiTypeSelect.value === "google_geocode") {
     googleDisplayGeoLocation(googleApiKeyInput.value, latLonData, locListUl);
   } else if (apiTypeSelect.value === "google_nearby") {
-    googleDisplayNearby(googleApiKeyInput.value, locData, locListUl, orderSelect.value);
+    googleDisplayNearby(
+      googleApiKeyInput.value,
+      locData,
+      locListUl,
+      orderSelect.value
+    );
   }
 }
 

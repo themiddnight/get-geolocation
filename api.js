@@ -71,7 +71,7 @@ export function longdoDisplayNearby(key, latLonData, ulElement) {
     `https://api.longdo.com/POIService/json/search
       ?lat=${latLonData.latitude}
       &lon=${latLonData.longitude}
-      &span=500m
+      &span=100m
       &limit=10
       &key=${key}`.replace(/\s/g, "")
   )
@@ -84,6 +84,7 @@ export function longdoDisplayNearby(key, latLonData, ulElement) {
         li.innerHTML = `
               <b>${result.name}</b><br>
               <small><b>distance:</b> ${result.distance}</small><br>
+              <small><b>type:</b> ${result.type}</small><br>
               <small><b>id:</b> ${result.id}</small>
             `;
         ulElement.appendChild(li);
