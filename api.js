@@ -32,7 +32,7 @@ export function googleDisplayNearby(key, latLonData, ulElement, order) {
         "X-Goog-FieldMask": "places.displayName.text,places.id,places.googleMapsUri",
       },
       body: JSON.stringify({
-        maxResultCount: 10,
+        maxResultCount: 100,
         rankPreference: order,
         locationRestriction: {
           circle: {
@@ -72,7 +72,7 @@ export function longdoDisplayNearby(key, latLonData, ulElement) {
       ?lat=${latLonData.latitude}
       &lon=${latLonData.longitude}
       &span=100m
-      &limit=10
+      &limit=100
       &key=${key}`.replace(/\s/g, "")
   )
     .then((response) => response.json())
