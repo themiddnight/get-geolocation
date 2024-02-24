@@ -9,24 +9,69 @@ const posDetailUl = document.getElementById("posDetails");
 const locListUl = document.getElementById("locList");
 const refreshBtn = document.getElementById("refreshBtn");
 const googleApiKeyInput = document.getElementById("google_api_key");
+const googleKeyDiv = document.getElementById("google_key_div");
 const longdoApiKeyInput = document.getElementById("longdo_api_key");
+const longdoKeyDiv = document.getElementById("longdo_key_div");
 const apiTypeSelect = document.getElementById("api_type");
 const orderSelect = document.getElementById("order_by");
+const radiusInput = document.getElementById("radius");
 
-let latLonData = "";
+let locData = {};
 
-apiTypeSelect.addEventListener("change", async () => {
+// Event listeners
+apiTypeSelect.addEventListener("change", () => {
   if (apiTypeSelect.value === "google_nearby") {
     orderSelect.disabled = false;
-  } else {
+    googleKeyDiv.classList.remove("hidden");
+    longdoKeyDiv.classList.add("hidden");
+  } else if (apiTypeSelect.value === "google_geocode") {
     orderSelect.disabled = true;
+    googleKeyDiv.classList.remove("hidden");
+    longdoKeyDiv.classList.add("hidden");
+  } else if (apiTypeSelect.value === "longdo_nearby") {
+    orderSelect.disabled = true;
+    googleKeyDiv.classList.add("hidden");
+    longdoKeyDiv.classList.remove("hidden");
   }
 });
 
-refreshBtn.addEventListener("click", async () => {
-  await search();
+refreshBtn.addEventListener("click", () => {
+  localStorage.setItem(
+    "apiKey",
+    JSON.stringify({
+      google: googleApiKeyInput.value,
+      longdo: longdoApiKeyInput.value,
+    })
+  );
+  locListUl.innerHTML = "...";
+  if (apiTypeSelect.value === "longdo_nearby") {
+    longdoDisplayNearby(
+      longdoApiKeyInput.value, 
+      locData.latitude,
+      locData.longitude,
+      radiusInput.value,
+      locListUl
+    );
+  } else if (apiTypeSelect.value === "google_geocode") {
+    googleDisplayGeoLocation(
+      googleApiKeyInput.value,
+      `${locData.latitude},${locData.longitude}`, 
+      locListUl
+    );
+  } else if (apiTypeSelect.value === "google_nearby") {
+    googleDisplayNearby(
+      googleApiKeyInput.value,
+      locData.latitude,
+      locData.longitude,
+      orderSelect.value,
+      radiusInput.value,
+      locListUl,
+    );
+  }
 });
 
+// Start app
+// Load API keys from local storage
 try {
   const apiKeyStorage = JSON.parse(localStorage.getItem("apiKey"));
   if (apiKeyStorage.google) {
@@ -39,68 +84,38 @@ try {
   localStorage.setItem("apiKey", JSON.stringify({ google: "", longdo: "" }));
 }
 
-async function getCoords() {
-  try {
-    const p = await new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: true,
-        timeout: 5000,
-      });
-    });
-    return {
-      accuracy: p.coords.accuracy,
-      altitude: p.coords.altitude,
-      altitudeAccuracy: p.coords.altitudeAccuracy,
-      heading: p.coords.heading,
-      latitude: p.coords.latitude,
-      longitude: p.coords.longitude,
-      speed: p.coords.speed,
-    };
-  } catch (error) {
-    console.error("Error getting geolocation:", error);
-    return {
-      error: error.message,
-    };
-  }
-}
+// Get current position
+navigator.geolocation.watchPosition(displayDetails, displayError, {
+  enableHighAccuracy: true,
+  timeout: 5000,
+  maximumAge: 0,
+});
 
-async function displayDetails() {
-  const locData = await getCoords();
+function displayDetails(p) {
   latLon.innerHTML = "...";
-  locListUl.innerHTML = "...";
-  latLonData = `${locData.latitude},${locData.longitude}`;
-  latLon.innerHTML = latLonData;
+  locData = {
+    latitude: p?.coords.latitude || "N/A",
+    longitude: p?.coords.longitude || "N/A",
+    accuracy: p?.coords.accuracy || "N/A",
+    altitude: p?.coords.altitude || "N/A",
+    altitudeAccuracy: p?.coords.altitudeAccuracy || "N/A",
+    heading: p?.coords.heading || "N/A",
+    speed: p?.coords.speed || "N/A",
+    timestamp: p?.timestamp || "N/A",
+  };
+  latLon.innerHTML = `${locData.latitude},${locData.longitude}`;
   posDetailUl.innerHTML = "";
   Object.keys(locData).forEach((key, i) => {
     const li = document.createElement("li");
     li.innerHTML = `<b>${key}:</b> ${locData[key]}`;
     posDetailUl.appendChild(li);
   });
-  return locData;
+  refreshBtn.disabled = false;
 }
 
-async function search() {
-  localStorage.setItem(
-    "apiKey",
-    JSON.stringify({
-      google: googleApiKeyInput.value,
-      longdo: longdoApiKeyInput.value,
-    })
-  );
-  console.log(localStorage.getItem("apiKey"));
-  const locData = await displayDetails();
-  if (apiTypeSelect.value === "longdo_nearby") {
-    longdoDisplayNearby(longdoApiKeyInput.value, locData, locListUl);
-  } else if (apiTypeSelect.value === "google_geocode") {
-    googleDisplayGeoLocation(googleApiKeyInput.value, latLonData, locListUl);
-  } else if (apiTypeSelect.value === "google_nearby") {
-    googleDisplayNearby(
-      googleApiKeyInput.value,
-      locData,
-      locListUl,
-      orderSelect.value
-    );
-  }
+function displayError(err) {
+  console.error(err);
+  latLon.innerHTML = "N/A";
+  posDetailUl.innerHTML = "";
+  refreshBtn.disabled = true;
 }
-
-await displayDetails();

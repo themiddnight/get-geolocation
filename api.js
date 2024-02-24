@@ -8,89 +8,109 @@ export function googleDisplayGeoLocation(key, latLonData, ulElement) {
     .then((response) => response.json())
     .then((data) => {
       ulElement.innerHTML = "";
-      data.results.forEach((result) => {
-        const li = document.createElement("li");
-        li.classList.add("loc-item");
-        li.innerHTML = `
-              <b>${result.formatted_address}</b><br>
-              <small><b>result_type:</b> ${result.types}</small><br>
-              <small><b>location_type:</b> ${result.geometry.location_type}</small><br>
-              <small style="word-break: break-all"><b>place_id:</b> ${result.place_id}</small>
-            `;
-        ulElement.appendChild(li);
-      });
+      if (data.results.length > 0) {
+        data.results.forEach((result) => {
+          const li = document.createElement("li");
+          li.classList.add("loc-item");
+          li.innerHTML = `
+                <b>${result.formatted_address}</b><br>
+                <small><b>result_type:</b> ${result.types}</small><br>
+                <small><b>location_type:</b> ${result.geometry.location_type}</small><br>
+                <small style="word-break: break-all"><b>place_id:</b> ${result.place_id}</small>
+              `;
+          ulElement.appendChild(li);
+        });
+      } else {
+        ulElement.innerHTML = "No results";
+      }
+    })
+    .catch((error) => {
+      console.error("Error getting geolocation:", error);
+      ulElement.innerHTML = `Error getting geolocation: ${error}`;
     });
 }
 
-export function googleDisplayNearby(key, latLonData, ulElement, order) {
-  try {
-    fetch("https://places.googleapis.com/v1/places:searchNearby", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Goog-Api-Key": key,
-        "X-Goog-FieldMask": "places.displayName.text,places.id,places.googleMapsUri",
-      },
-      body: JSON.stringify({
-        maxResultCount: 100,
-        rankPreference: order,
-        locationRestriction: {
-          circle: {
-            center: {
-              latitude: latLonData.latitude,
-              longitude: latLonData.longitude,
-            },
-            radius: 100.0,
+export function googleDisplayNearby(key, lat, lon, order, radius, ulElement) {
+  fetch("https://places.googleapis.com/v1/places:searchNearby", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": key,
+      "X-Goog-FieldMask": `
+        places.displayName.text,
+        places.id,places.googleMapsUri,
+        places.primaryType,
+      `.replace(/\s/g, ""),
+    },
+    body: JSON.stringify({
+      maxResultCount: 20,
+      rankPreference: order,
+      locationRestriction: {
+        circle: {
+          center: {
+            latitude: lat,
+            longitude: lon,
           },
+          radius
         },
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        ulElement.innerHTML = "";
+      },
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data)
+      ulElement.innerHTML = "";
+      if (data.places) {
         data.places.forEach((result) => {
           const li = document.createElement("li");
           li.classList.add("loc-item");
           li.innerHTML = `
-              <b><a href=${result.googleMapsUri}>${result.displayName.text}</a></b><br>
-              <small><b>place_id:</b> ${result.id}</small>
+              <b><a href=${result.googleMapsUri} target="_blank">${result.displayName.text}</a></b><br>
+              <small><b>primaryType:</b> ${result.primaryType}</small><br>
+              <small><b>id:</b> ${result.id}</small>
             `;
           ulElement.appendChild(li);
         });
-      })
-      .catch((error) => {
-        console.error("Error getting nearby places:", error);
-      });
-  } catch (error) {
-    console.error("Error getting nearby places:", error);
-  }
+      } else {
+        ulElement.innerHTML = "No results";
+      }
+    })
+    .catch((error) => {
+      console.error("Error getting nearby places:", error);
+      ulElement.innerHTML = `Error getting nearby places: ${error}`;
+    });
 }
 
-export function longdoDisplayNearby(key, latLonData, ulElement) {
+export function longdoDisplayNearby(key, lat, lon, radius, ulElement) {
   fetch(
     `https://api.longdo.com/POIService/json/search
-      ?lat=${latLonData.latitude}
-      &lon=${latLonData.longitude}
-      &span=100m
+      ?lat=${lat}
+      &lon=${lon}
+      &span=${radius}m
       &limit=100
       &key=${key}`.replace(/\s/g, "")
   )
     .then((response) => response.json())
     .then((data) => {
       ulElement.innerHTML = "";
-      data.data.forEach((result) => {
-        const li = document.createElement("li");
-        li.classList.add("loc-item");
-        li.innerHTML = `
-              <b>${result.name}</b><br>
-              <small><b>distance:</b> ${result.distance}</small><br>
-              <small><b>type:</b> ${result.type}</small><br>
-              <small><b>id:</b> ${result.id}</small>
-            `;
-        ulElement.appendChild(li);
-      });
+      if (data.data.length > 0) {
+        data.data.forEach((result) => {
+          const li = document.createElement("li");
+          li.classList.add("loc-item");
+          li.innerHTML = `
+                <b><a href=https://map.longdo.com/main/p/${result.id} target="_blank">${result.name}</a></b><br>
+                <small><b>distance:</b> ${result.distance}</small><br>
+                <small><b>type:</b> ${result.type}</small><br>
+                <small><b>id:</b> ${result.id}</small>
+              `;
+          ulElement.appendChild(li);
+        });
+      } else {
+        ulElement.innerHTML = "No results";
+      }
     })
     .catch((error) => {
       console.error("Error getting nearby places:", error);
+      ulElement.innerHTML = `Error getting nearby places: ${error}`;
     });
 }
