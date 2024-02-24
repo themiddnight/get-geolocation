@@ -26,13 +26,6 @@ let isPaused = false;
 let locData = {};
 let watchID;
 
-// Get current position
-watchID = geoLoc.watchPosition(displayDetails, displayError, {
-  enableHighAccuracy: isHighAccuracy,
-  timeout: 5000,
-  maximumAge: 0,
-});
-
 // Event listeners
 highAccuCheck.addEventListener("change", () => {
   isHighAccuracy = !isHighAccuracy;
@@ -49,7 +42,6 @@ highAccuCheck.addEventListener("change", () => {
 pauseBtn.addEventListener("click", () => {
   isPaused = !isPaused;
   pauseBtn.innerHTML = isPaused ? "Resume" : "Pause";
-  searchBtn.disabled = isPaused;
   if (isPaused) {
     geoLoc.clearWatch(watchID);
   } else {
@@ -125,6 +117,13 @@ try {
 } catch {
   localStorage.setItem("apiKey", JSON.stringify({ google: "", longdo: "" }));
 }
+
+// Get current position
+watchID = geoLoc.watchPosition(displayDetails, displayError, {
+  enableHighAccuracy: isHighAccuracy,
+  timeout: 5000,
+  maximumAge: 0,
+});
 
 function displayDetails(p) {
   latLon.innerHTML = "...";
