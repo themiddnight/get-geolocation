@@ -27,8 +27,13 @@ let locData = {};
 highAccuCheck.addEventListener("change", () => {
   isHighAccuracy = !isHighAccuracy;
   highAccuCheck.checked = isHighAccuracy;
+  count = 0;
   navigator.geolocation.clearWatch(appWatchNave);
-  startNavigate(isHighAccuracy);
+  appWatchNave = navigator.geolocation.watchPosition(displayDetails, displayError, {
+    enableHighAccuracy: isHighAccuracy,
+    timeout: 5000,
+    maximumAge: 0,
+  });
 });
 
 pauseBtn.addEventListener("click", () => {
@@ -38,7 +43,11 @@ pauseBtn.addEventListener("click", () => {
   if (isPaused) {
     navigator.geolocation.clearWatch(appWatchNave);
   } else {
-    startNavigate(isHighAccuracy);
+    appWatchNave = navigator.geolocation.watchPosition(displayDetails, displayError, {
+      enableHighAccuracy: isHighAccuracy,
+      timeout: 5000,
+      maximumAge: 0,
+    });
   }
 });
 
@@ -108,14 +117,11 @@ try {
 }
 
 // Get current position
-function startNavigate(highAccuracy) {
-  const appWatchNave = navigator.geolocation.watchPosition(displayDetails, displayError, {
-    enableHighAccuracy: highAccuracy,
-    timeout: 5000,
-    maximumAge: 0,
-  });
-  return appWatchNave;
-}
+let appWatchNave = navigator.geolocation.watchPosition(displayDetails, displayError, {
+  enableHighAccuracy: isHighAccuracy,
+  timeout: 5000,
+  maximumAge: 0,
+});
 
 function displayDetails(p) {
   latLon.innerHTML = "...";
@@ -145,5 +151,3 @@ function displayError(err) {
   posDetailUl.innerHTML = "";
   searchBtn.disabled = true;
 }
-
-const appWatchNave = startNavigate(isHighAccuracy);
