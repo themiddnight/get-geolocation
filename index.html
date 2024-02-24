@@ -13,11 +13,11 @@
     <h1>Current location</h1>
     <p><b>Lat-Lon:</b> <span id="latLon"></span></p>
     <ul id="posDetails"></ul>
-    <div class="div-form">
+    <div id="google_key_div" class="div-form hidden">
       <label for="google_api_key">Google API key:</label>
       <input type="text" id="google_api_key" placeholder="API key for Google service">
     </div>
-    <div class="div-form">
+    <div id="longdo_key_div" class="div-form">
       <label for="longdo_api_key">Longdo API key:</label>
       <input type="text" id="longdo_api_key" placeholder="API key for Longdo service">
     </div>
@@ -37,13 +37,17 @@
           <option value="DISTANCE">Distance</option>
         </select>
       </div>
-      <button id="refreshBtn">Search</button>
+      <div class="div-form">
+        <label for="radius">Radius(m):</label>
+        <input type="number" id="radius" placeholder="Radius in meters" value="50" required>
+      </div>
+      <button id="refreshBtn" disabled>Search</button>
     </div>
   </div>
   <hr>
   <div class="div-center">
     <h1>Nearby locations</h1>
-    <ul id="locList"></ul>
+    <ol id="locList"></ol>
   </div>
   <hr>
   <footer class="div-center">
