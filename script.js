@@ -109,7 +109,7 @@ try {
 
 // Get current position
 function startNavigate(highAccuracy) {
-  const appWatchNave = navigator.geolocation.getCurrentPosition(displayDetails, displayError, {
+  const appWatchNave = navigator.geolocation.watchPosition(displayDetails, displayError, {
     enableHighAccuracy: highAccuracy,
     timeout: 5000,
     maximumAge: 0,
