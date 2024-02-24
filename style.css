@@ -54,12 +54,17 @@ button:active {
 .div-flex {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-items: last baseline;
-  gap: 10px;
+  column-gap: 10px;
 }
 
 .div-form > * {
   margin-block: 5px;
   display: flex;
   flex-direction: column;
+}
+
+.hidden {
+  display: none;
 }
