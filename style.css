@@ -3,18 +3,6 @@ body {
   max-width: 640px;
 }
 
-/* .div-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 640px;
-  margin-inline: auto;
-}
-
-.div-center > * {
-  margin-block: 10px;
-} */
-
 p {
   margin-block: 10px;
   line-height: 1;
@@ -23,15 +11,6 @@ p {
 li {
   margin-block: 10px;
   line-height: 1;
-}
-
-.input-box {
-  padding-inline: 10px;
-  padding-block: 5px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: medium;
-  width: -webkit-fill-available;
 }
 
 button {
@@ -49,6 +28,21 @@ button:hover {
 
 button:active {
   filter: brightness(80%);
+}
+
+hr {
+  margin-block: 20px;
+  border: 0;
+  border-top: 1px solid #ccc;
+}
+
+.input-box {
+  padding-inline: 10px;
+  padding-block: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: medium;
+  width: -webkit-fill-available;
 }
 
 .loc-item {
