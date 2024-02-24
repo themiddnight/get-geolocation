@@ -15,6 +15,11 @@ body {
   margin-block: 10px;
 } */
 
+p {
+  margin-block: 10px;
+  line-height: 1;
+}
+
 li {
   margin-block: 10px;
   line-height: 1;
