@@ -25,7 +25,7 @@ li {
   line-height: 1;
 }
 
-input, select {
+.input-box {
   padding-inline: 10px;
   padding-block: 5px;
   border-radius: 5px;

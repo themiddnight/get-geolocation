@@ -14,18 +14,24 @@
     <p><b>Lat-Lon:</b></p>
     <p id="latLon"></p>
     <ul id="posDetails"></ul>
+    <div class="div-flex">
+      <input type="checkbox" id="highAccuracy" name="highAccuracy" checked>
+      <label for="highAccuracy">High Accuracy</label>
+      <button id="pauseBtn">Pause</button>
+    </div>
+    <hr>
     <div id="google_key_div" class="div-form hidden">
       <label for="google_api_key">Google API key:</label>
-      <input type="text" id="google_api_key" placeholder="API key for Google service">
+      <input class="input-box" type="text" id="google_api_key" placeholder="API key for Google service">
     </div>
     <div id="longdo_key_div" class="div-form">
       <label for="longdo_api_key">Longdo API key:</label>
-      <input type="text" id="longdo_api_key" placeholder="API key for Longdo service">
+      <input class="input-box" type="text" id="longdo_api_key" placeholder="API key for Longdo service">
     </div>
     <div class="div-flex">
       <div class="div-form">
         <label for="api_type">API type:</label>
-        <select id="api_type" name="api_type">
+        <select class="input-box" id="api_type" name="api_type">
           <option value="longdo_nearby">Longdo Nearby</option>
           <option value="google_geocode">Google Geocode</option>
           <option value="google_nearby">Google Nearby</option>
@@ -33,19 +39,18 @@
       </div>
       <div class="div-form">
         <label for="order_by">Order by:</label>
-        <select id="order_by" name="order_by" disabled>
+        <select class="input-box" id="order_by" name="order_by" disabled>
           <option value="POPULARITY">Popularity</option>
           <option value="DISTANCE">Distance</option>
         </select>
       </div>
       <div class="div-form">
         <label for="radius">Radius(m):</label>
-        <input type="number" id="radius" placeholder="Radius in meters" value="100" required>
+        <input class="input-box" type="number" id="radius" placeholder="Radius in meters" value="100" required>
       </div>
-      <button id="refreshBtn" disabled>Search</button>
+      <button id="searchBtn" disabled>Search</button>
     </div>
   </div>
-  <hr>
   <div class="div-center">
     <h1>Nearby locations</h1>
     <ol id="locList"></ol>

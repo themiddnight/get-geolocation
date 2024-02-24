@@ -7,7 +7,9 @@ import {
 const latLon = document.getElementById("latLon");
 const posDetailUl = document.getElementById("posDetails");
 const locListUl = document.getElementById("locList");
-const refreshBtn = document.getElementById("refreshBtn");
+const highAccuCheck = document.getElementById("highAccuracy");
+const pauseBtn = document.getElementById("pauseBtn");
+const searchBtn = document.getElementById("searchBtn");
 const googleApiKeyInput = document.getElementById("google_api_key");
 const googleKeyDiv = document.getElementById("google_key_div");
 const longdoApiKeyInput = document.getElementById("longdo_api_key");
@@ -16,9 +18,30 @@ const apiTypeSelect = document.getElementById("api_type");
 const orderSelect = document.getElementById("order_by");
 const radiusInput = document.getElementById("radius");
 
+let count = 0;
+let isHighAccuracy = true;
+let isPaused = false;
 let locData = {};
 
 // Event listeners
+highAccuCheck.addEventListener("change", () => {
+  isHighAccuracy = !isHighAccuracy;
+  highAccuCheck.checked = isHighAccuracy;
+  navigator.geolocation.clearWatch(appWatchNave);
+  startNavigate(isHighAccuracy);
+});
+
+pauseBtn.addEventListener("click", () => {
+  isPaused = !isPaused;
+  pauseBtn.innerHTML = isPaused ? "Resume" : "Pause";
+  searchBtn.disabled = isPaused;
+  if (isPaused) {
+    navigator.geolocation.clearWatch(appWatchNave);
+  } else {
+    startNavigate(isHighAccuracy);
+  }
+});
+
 apiTypeSelect.addEventListener("change", () => {
   if (apiTypeSelect.value === "google_nearby") {
     orderSelect.disabled = false;
@@ -35,7 +58,7 @@ apiTypeSelect.addEventListener("change", () => {
   }
 });
 
-refreshBtn.addEventListener("click", () => {
+searchBtn.addEventListener("click", () => {
   localStorage.setItem(
     "apiKey",
     JSON.stringify({
@@ -85,11 +108,14 @@ try {
 }
 
 // Get current position
-navigator.geolocation.watchPosition(displayDetails, displayError, {
-  enableHighAccuracy: true,
-  timeout: 5000,
-  maximumAge: 0,
-});
+function startNavigate(highAccuracy) {
+  const appWatchNave = navigator.geolocation.getCurrentPosition(displayDetails, displayError, {
+    enableHighAccuracy: highAccuracy,
+    timeout: 5000,
+    maximumAge: 0,
+  });
+  return appWatchNave;
+}
 
 function displayDetails(p) {
   latLon.innerHTML = "...";
@@ -101,7 +127,7 @@ function displayDetails(p) {
     altitudeAccuracy: p?.coords.altitudeAccuracy || "N/A",
     heading: p?.coords.heading || "N/A",
     speed: p?.coords.speed || "N/A",
-    timestamp: p?.timestamp || "N/A",
+    refreshCount: count++,
   };
   latLon.innerHTML = `${locData.latitude},${locData.longitude}`;
   posDetailUl.innerHTML = "";
@@ -110,12 +136,14 @@ function displayDetails(p) {
     li.innerHTML = `<b>${key}:</b> ${locData[key]}`;
     posDetailUl.appendChild(li);
   });
-  refreshBtn.disabled = false;
+  searchBtn.disabled = false;
 }
 
 function displayError(err) {
   console.error(err);
   latLon.innerHTML = "N/A";
   posDetailUl.innerHTML = "";
-  refreshBtn.disabled = true;
+  searchBtn.disabled = true;
 }
+
+const appWatchNave = startNavigate(isHighAccuracy);
