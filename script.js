@@ -18,18 +18,28 @@ const apiTypeSelect = document.getElementById("api_type");
 const orderSelect = document.getElementById("order_by");
 const radiusInput = document.getElementById("radius");
 
+const geoLoc = navigator.geolocation;
+
 let count = 0;
 let isHighAccuracy = true;
 let isPaused = false;
 let locData = {};
+let watchID;
+
+// Get current position
+watchID = geoLoc.watchPosition(displayDetails, displayError, {
+  enableHighAccuracy: isHighAccuracy,
+  timeout: 5000,
+  maximumAge: 0,
+});
 
 // Event listeners
 highAccuCheck.addEventListener("change", () => {
   isHighAccuracy = !isHighAccuracy;
   highAccuCheck.checked = isHighAccuracy;
   count = 0;
-  navigator.geolocation.clearWatch(appWatchNave);
-  appWatchNave = navigator.geolocation.watchPosition(displayDetails, displayError, {
+  geoLoc.clearWatch(watchID);
+  watchID = geoLoc.watchPosition(displayDetails, displayError, {
     enableHighAccuracy: isHighAccuracy,
     timeout: 5000,
     maximumAge: 0,
@@ -41,9 +51,9 @@ pauseBtn.addEventListener("click", () => {
   pauseBtn.innerHTML = isPaused ? "Resume" : "Pause";
   searchBtn.disabled = isPaused;
   if (isPaused) {
-    navigator.geolocation.clearWatch(appWatchNave);
+    geoLoc.clearWatch(watchID);
   } else {
-    appWatchNave = navigator.geolocation.watchPosition(displayDetails, displayError, {
+    watchID = geoLoc.watchPosition(displayDetails, displayError, {
       enableHighAccuracy: isHighAccuracy,
       timeout: 5000,
       maximumAge: 0,
@@ -115,13 +125,6 @@ try {
 } catch {
   localStorage.setItem("apiKey", JSON.stringify({ google: "", longdo: "" }));
 }
-
-// Get current position
-let appWatchNave = navigator.geolocation.watchPosition(displayDetails, displayError, {
-  enableHighAccuracy: isHighAccuracy,
-  timeout: 5000,
-  maximumAge: 0,
-});
 
 function displayDetails(p) {
   latLon.innerHTML = "...";
