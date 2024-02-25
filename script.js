@@ -10,7 +10,6 @@ const posDetailUl = document.getElementById("posDetails");
 const locListUl = document.getElementById("locList");
 const highAccuCheck = document.getElementById("highAccuracy");
 const pauseBtn = document.getElementById("pauseBtn");
-const clearGraphBtn = document.getElementById("clearGraphBtn");
 const searchBtn = document.getElementById("searchBtn");
 const googleApiKeyInput = document.getElementById("google_api_key");
 const googleKeyDiv = document.getElementById("google_key_div");
@@ -161,7 +160,7 @@ function displayDetails(p) {
 
 function displayError(err) {
   console.error(err);
-  latLon.innerHTML = "N/A";
-  posDetailUl.innerHTML = "";
+  // latLon.innerHTML = "Error getting location";
+  posDetailUl.innerHTML = "Error getting location";
   searchBtn.disabled = true;
 }
