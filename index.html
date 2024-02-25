@@ -27,6 +27,7 @@
       <button id="clearGraphBtn">Clear Graph</button>
     </div>
     <hr>
+    <h2>Nearby locations</h2>
     <div id="google_key_div" class="div-form hidden">
       <label for="google_api_key">Google API key:</label>
       <input class="input-box" type="text" id="google_api_key" placeholder="API key for Google service">
@@ -58,20 +59,23 @@
       <button id="searchBtn" disabled>Search</button>
     </div>
   </div>
-  <hr>
   <div class="div-center">
-    <h2>Nearby locations</h2>
+    <h3>Results</h3>
     <ol id="locList">...</ol>
   </div>
   <hr>
   <footer class="div-center">
-    <div class="div-form">
+    <p>References:</p>
+    <div class="div-flex">
+      <a href="https://canvasjs.com/docs/charts/basics-of-creating-html5-chart/">
+        CanvasJS
+      </a> | 
       <a href="https://developers.google.com/maps/documentation/geocoding/requests-reverse-geocoding">
         Google Maps Geocoding API
-      </a>
+      </a> |
       <a href="https://developers.google.com/maps/documentation/places/web-service/op-overview">
         Google Maps Places API
-      </a>
+      </a> |
       <a href="https://api.longdo.com/map/doc/rest.php">
         Longdo Maps API
       </a>
