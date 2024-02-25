@@ -4,7 +4,7 @@ const accList = [];
 const speedList = [];
 
 // Clear graph button event
-clearGraphBtn.addEventListener("click", () => {
+document.getElementById("clearGraphBtn").addEventListener("click", () => {
   latList.length = 0;
   lonList.length = 0;
   accList.length = 0;
@@ -67,7 +67,7 @@ export function updateChart(count, lat, lon, acc, speed) {
   latList.push({ label: count, y: lat });
   lonList.push({ label: count, y: lon });
   accList.push({ label: count, y: acc });
-  speedList.push({ label: count, y: speed? speed : 0 });
+  speedList.push({ label: count, y: speed ? speed : 0 });
   latLonChart.render();
   speedChart.render();
 }
