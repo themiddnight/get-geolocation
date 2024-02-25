@@ -3,12 +3,14 @@ import {
   googleDisplayNearby,
   longdoDisplayNearby,
 } from "./api.js";
+import { updateChart } from "./chart.js";
 
-const latLon = document.getElementById("latLon");
+// const latLon = document.getElementById("latLon");
 const posDetailUl = document.getElementById("posDetails");
 const locListUl = document.getElementById("locList");
 const highAccuCheck = document.getElementById("highAccuracy");
 const pauseBtn = document.getElementById("pauseBtn");
+const clearGraphBtn = document.getElementById("clearGraphBtn");
 const searchBtn = document.getElementById("searchBtn");
 const googleApiKeyInput = document.getElementById("google_api_key");
 const googleKeyDiv = document.getElementById("google_key_div");
@@ -17,6 +19,7 @@ const longdoKeyDiv = document.getElementById("longdo_key_div");
 const apiTypeSelect = document.getElementById("api_type");
 const orderSelect = document.getElementById("order_by");
 const radiusInput = document.getElementById("radius");
+const consoleDiv = document.getElementById("console");
 
 const geoLoc = navigator.geolocation;
 
@@ -30,13 +33,15 @@ let watchID;
 highAccuCheck.addEventListener("change", () => {
   isHighAccuracy = !isHighAccuracy;
   highAccuCheck.checked = isHighAccuracy;
-  count = 0;
-  geoLoc.clearWatch(watchID);
-  watchID = geoLoc.watchPosition(displayDetails, displayError, {
-    enableHighAccuracy: isHighAccuracy,
-    timeout: 5000,
-    maximumAge: 0,
-  });
+  // count = 0;
+  if (!isPaused) {
+    geoLoc.clearWatch(watchID);
+    watchID = geoLoc.watchPosition(displayDetails, displayError, {
+      enableHighAccuracy: isHighAccuracy,
+      timeout: 5000,
+      maximumAge: 0,
+    });
+  }
 });
 
 pauseBtn.addEventListener("click", () => {
@@ -126,18 +131,25 @@ watchID = geoLoc.watchPosition(displayDetails, displayError, {
 });
 
 function displayDetails(p) {
-  latLon.innerHTML = "...";
+  // latLon.innerHTML = "...";
   locData = {
-    latitude: p?.coords.latitude || "N/A",
-    longitude: p?.coords.longitude || "N/A",
-    accuracy: p?.coords.accuracy || "N/A",
-    altitude: p?.coords.altitude || "N/A",
-    altitudeAccuracy: p?.coords.altitudeAccuracy || "N/A",
-    heading: p?.coords.heading || "N/A",
-    speed: p?.coords.speed || "N/A",
+    latitude: p?.coords.latitude || null,
+    longitude: p?.coords.longitude || null,
+    accuracy: p?.coords.accuracy || null,
+    altitude: p?.coords.altitude || null,
+    altitudeAccuracy: p?.coords.altitudeAccuracy || null,
+    heading: p?.coords.heading || null,
+    speed: p?.coords.speed || null,
     refreshCount: count++,
   };
-  latLon.innerHTML = `${locData.latitude},${locData.longitude}`;
+  // latLon.innerHTML = `${locData.latitude},${locData.longitude}`;
+  updateChart(
+    locData.refreshCount,
+    locData.latitude,
+    locData.longitude,
+    locData.accuracy,
+    locData.speed
+  );
   posDetailUl.innerHTML = "";
   Object.keys(locData).forEach((key, i) => {
     const li = document.createElement("li");
