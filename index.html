@@ -6,18 +6,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Get Geolocation</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 </head>
 
 <body>
   <div class="div-center">
-    <h1>Current location</h1>
-    <p><b>Lat-Lon:</b></p>
-    <p id="latLon"></p>
+    <div style="background-color: lightgray;">
+      <code id="console"></code>
+    </div>
+    <h2>Current location</h2>
+    <!-- <p><b>Lat-Lon:</b></p>
+    <p id="latLon"></p> -->
+    <div id="latLonChartContainer" style="height: 150px; width: 100%;"></div>
+    <div id="speedChartContainer" style="height: 150px; width: 100%;"></div>
     <ul id="posDetails"></ul>
     <div class="div-flex">
       <input type="checkbox" id="highAccuracy" name="highAccuracy" checked>
       <label for="highAccuracy">High Accuracy</label>
       <button id="pauseBtn">Pause</button>
+      <button id="clearGraphBtn">Clear Graph</button>
     </div>
     <hr>
     <div id="google_key_div" class="div-form hidden">
@@ -53,7 +60,7 @@
   </div>
   <hr>
   <div class="div-center">
-    <h1>Nearby locations</h1>
+    <h2>Nearby locations</h2>
     <ol id="locList">...</ol>
   </div>
   <hr>
