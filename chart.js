@@ -58,12 +58,12 @@ const speedChart = new CanvasJS.Chart("speedChartContainer", {
 
 // functions
 export function updateChart(count, lat, lon, acc, speed) {
-  if (latList.length >= 100) {
-    latList.length = 0;
-    lonList.length = 0;
-    accList.length = 0;
-    speedList.length = 0;
-  }
+  // if (latList.length >= 100) {
+  //   latList.length = 0;
+  //   lonList.length = 0;
+  //   accList.length = 0;
+  //   speedList.length = 0;
+  // }
   latList.push({ label: count, y: lat });
   lonList.push({ label: count, y: lon });
   accList.push({ label: count, y: acc });
